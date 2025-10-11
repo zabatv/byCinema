@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -161,122 +161,8 @@
     </div>
     
     <div class="main-content">
-        <div class="product-grid">
-            <!-- Карточки товаров -->
-            <div class="product-card">
-                <img src="images/1.jpg" alt="Фильм 1">
-                <div class="product-info">
-                    <div class="product-title">Субмарина</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Куртка</span>
-                        <div class="price-tag">14.999 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <img src="images/2.jpg" alt="Фильм 2">
-                <div class="product-info">
-                    <div class="product-title">Реквием по мечте</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Шапка</span>
-                        <div class="price-tag">2.499 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <img src="images/3.jpg" alt="Фильм 3">
-                <div class="product-info">
-                    <div class="product-title">Бегущий по лезвию</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Пальто</span>
-                        <div class="price-tag">21.499 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <img src="images/4.jpg" alt="Фильм 4">
-                <div class="product-info">
-                    <div class="product-title">Игла</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Куртка</span>
-                        <div class="price-tag">12.999 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Кингсман -->
-            <div class="product-card">
-                <img src="images/5.jpg" alt="Кингсман">
-                <div class="product-info">
-                    <div class="product-title">Кингсман</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Строгий двубортный костюм</span>
-                        <div class="price-tag">70.000 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Довод -->
-            <div class="product-card">
-                <img src="images/6.jpg" alt="Довод">
-                <div class="product-info">
-                    <div class="product-title">Довод</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Льняное классическое платье</span>
-                        <div class="price-tag">1.425.000 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Остров проклятых -->
-            <div class="product-card">
-                <img src="images/7.jpg" alt="Остров проклятых">
-                <div class="product-info">
-                    <div class="product-title">Остров проклятых</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Зелёный кашемировый галстук</span>
-                        <div class="price-tag">14.250 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Огонь -->
-            <div class="product-card">
-                <img src="images/8.jpg" alt="Огонь">
-                <div class="product-info">
-                    <div class="product-title">Огонь</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Комбинезон противожарный МЧС</span>
-                        <div class="price-tag">10.000 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Дополнительные карточки -->
-            <div class="product-card">
-                <img src="images/9.jpg" alt="Фильм 9">
-                <div class="product-info">
-                    <div class="product-title">Название фильма 9</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Одежда</span>
-                        <div class="price-tag">5.799 ₽</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="product-card">
-                <img src="images/10.jpg" alt="Фильм 10">
-                <div class="product-info">
-                    <div class="product-title">Название фильма 10</div>
-                    <div class="info-row">
-                        <span class="clothing-label">Одежда</span>
-                        <div class="price-tag">6.299 ₽</div>
-                    </div>
-                </div>
-            </div>
+        <div class="product-grid" id="product-grid">
+            <!-- Карточки товаров будут генерироваться здесь -->
         </div>
     </div>
     
@@ -286,5 +172,78 @@
         <i class="fas fa-shopping-cart"></i>
         <i class="fas fa-user"></i>
     </div>
+
+    <script>
+        // Функция для загрузки JSON-файла
+        async function loadJSON(filename) {
+            try {
+                const response = await fetch(`DATA/${filename}`);
+                if (!response.ok) throw new Error(`Ошибка при загрузке файла ${filename}`);
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        // Функция для генерации карточки товара
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+
+            // Создаем изображение
+            const img = document.createElement('img');
+            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
+            img.alt = product.name;
+
+            // Создаем блок с информацией о товаре
+            const info = document.createElement('div');
+            info.className = 'product-info';
+
+            const title = document.createElement('div');
+            title.className = 'product-title';
+            title.textContent = product.name;
+
+            const row = document.createElement('div');
+            row.className = 'info-row';
+
+            const label = document.createElement('span');
+            label.className = 'clothing-label';
+            label.textContent = product.Object;
+
+            const price = document.createElement('div');
+            price.className = 'price-tag';
+            price.textContent = `${product.Price} ₽`;
+
+            row.appendChild(label);
+            row.appendChild(price);
+
+            info.appendChild(title);
+            info.appendChild(row);
+
+            card.appendChild(img);
+            card.appendChild(info);
+
+            return card;
+        }
+
+        // Основная функция для загрузки всех товаров
+        async function loadProducts() {
+            const productGrid = document.getElementById('product-grid');
+
+            // Пример списка файлов JSON (замените на реальные имена файлов)
+            const jsonFiles = ['1.json', '2.json', '3.json']; // Убедитесь, что файлы существуют в папке DATA
+
+            for (const file of jsonFiles) {
+                const productData = await loadJSON(file);
+                if (productData) {
+                    const card = createProductCard(productData);
+                    productGrid.appendChild(card);
+                }
+            }
+        }
+
+        // Загружаем товары при загрузке страницы
+        window.addEventListener('load', loadProducts);
+    </script>
 </body>
 </html>
