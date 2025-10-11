@@ -182,7 +182,6 @@
                 return await response.json();
             } catch (error) {
                 console.error(error);
-                return null; // Возвращаем null, если файл не загружен
             }
         }
 
@@ -227,31 +226,29 @@
             return card;
         }
 
-        // Основная функция для загрузки всех товаров
-        async function loadProducts() {
+        // Функция для выбора случайного числа в диапазоне
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        // Основная функция для загрузки случайного товара
+        async function loadRandomProduct() {
             const productGrid = document.getElementById('product-grid');
 
-            let index = 1; // Начинаем с первого файла
-            let hasMoreFiles = true; // Флаг для отслеживания наличия файлов
+            // Генерируем случайное число от 1 до 8
+            const randomFileNumber = getRandomInt(1, 8);
+            const randomFileName = `${randomFileNumber}.json`;
 
-            while (hasMoreFiles) {
-                const filename = `${index}.json`; // Формируем имя файла
-                const productData = await loadJSON(filename);
-
-                if (productData) {
-                    console.log(`Файл ${filename} успешно загружен`);
-                    const card = createProductCard(productData);
-                    productGrid.appendChild(card);
-                    index++; // Переходим к следующему файлу
-                } else {
-                    console.log(`Файл ${filename} не найден. Завершение загрузки.`);
-                    hasMoreFiles = false; // Прекращаем загрузку
-                }
+            // Загружаем случайный JSON-файл
+            const productData = await loadJSON(randomFileName);
+            if (productData) {
+                const card = createProductCard(productData);
+                productGrid.appendChild(card);
             }
         }
 
-        // Загружаем товары при загрузке страницы
-        window.addEventListener('load', loadProducts);
+        // Загружаем случайный товар при загрузке страницы
+        window.addEventListener('load', loadRandomProduct);
     </script>
 </body>
 </html>
