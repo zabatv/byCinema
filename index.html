@@ -173,82 +173,98 @@
         <i class="fas fa-user"></i>
     </div>
 
-    <script>
-        // Функция для загрузки JSON-файла
-        async function loadJSON(filename) {
-            try {
-                const response = await fetch(`DATA/${filename}`);
-                if (!response.ok) throw new Error(`Ошибка при загрузке файла ${filename}`);
-                return await response.json();
-            } catch (error) {
-                console.error(error);
-            }
+<script>
+    // Функция для загрузки JSON-файла
+    async function loadJSON(filename) {
+        try {
+            const response = await fetch(`DATA/${filename}`);
+            if (!response.ok) throw new Error(`Файл ${filename} не найден или произошла ошибка загрузки.`);
+            return await response.json();
+        } catch (error) {
+            console.error(error);
+            return null; // Возвращаем null, если файл не загружен
         }
+    }
 
-        // Функция для генерации карточки товара
-        function createProductCard(product) {
-            const card = document.createElement('div');
-            card.className = 'product-card';
+    // Функция для генерации карточки товара
+    function createProductCard(product) {
+        const card = document.createElement('div');
+        card.className = 'product-card';
 
-            // Создаем изображение
-            const img = document.createElement('img');
-            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
-            img.alt = product.name;
+        // Создаем изображение
+        const img = document.createElement('img');
+        img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
+        img.alt = product.name;
 
-            // Создаем блок с информацией о товаре
-            const info = document.createElement('div');
-            info.className = 'product-info';
+        // Создаем блок с информацией о товаре
+        const info = document.createElement('div');
+        info.className = 'product-info';
 
-            const title = document.createElement('div');
-            title.className = 'product-title';
-            title.textContent = product.name;
+        const title = document.createElement('div');
+        title.className = 'product-title';
+        title.textContent = product.name;
 
-            const row = document.createElement('div');
-            row.className = 'info-row';
+        const row = document.createElement('div');
+        row.className = 'info-row';
 
-            const label = document.createElement('span');
-            label.className = 'clothing-label';
-            label.textContent = product.Object;
+        const label = document.createElement('span');
+        label.className = 'clothing-label';
+        label.textContent = product.Object;
 
-            const price = document.createElement('div');
-            price.className = 'price-tag';
-            price.textContent = `${product.Price} ₽`;
+        const price = document.createElement('div');
+        price.className = 'price-tag';
+        price.textContent = `${product.Price} ₽`;
 
-            row.appendChild(label);
-            row.appendChild(price);
+        row.appendChild(label);
+        row.appendChild(price);
 
-            info.appendChild(title);
-            info.appendChild(row);
+        info.appendChild(title);
+        info.appendChild(row);
 
-            card.appendChild(img);
-            card.appendChild(info);
+        card.appendChild(img);
+        card.appendChild(info);
 
-            return card;
-        }
+        return card;
+    }
 
-        // Функция для выбора случайного числа в диапазоне
-        function getRandomInt(min, max) {
-            return Math.floor(Math.random() * (max - min + 1)) + min;
-        }
+    // Функция для выбора случайного числа в диапазоне
+    function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 
-        // Основная функция для загрузки случайного товара
-        async function loadRandomProduct() {
-            const productGrid = document.getElementById('product-grid');
+    // Основная функция для загрузки случайного товара
+    async function loadRandomProduct() {
+        const productGrid = document.getElementById('product-grid');
 
+        let attempts = 0; // Счетчик попыток
+        const maxAttempts = 5; // Максимальное количество попыток
+
+        while (attempts < maxAttempts) {
             // Генерируем случайное число от 1 до 8
             const randomFileNumber = getRandomInt(1, 8);
             const randomFileName = `${randomFileNumber}.json`;
 
             // Загружаем случайный JSON-файл
             const productData = await loadJSON(randomFileName);
+
             if (productData) {
                 const card = createProductCard(productData);
                 productGrid.appendChild(card);
+                break; // Выходим из цикла, если файл успешно загружен
+            } else {
+                attempts++;
+                console.warn(`Попытка ${attempts}: Файл ${randomFileName} не загружен.`);
             }
         }
 
-        // Загружаем случайный товар при загрузке страницы
-        window.addEventListener('load', loadRandomProduct);
-    </script>
+        if (attempts === maxAttempts) {
+            console.error("Не удалось загрузить ни один файл после нескольких попыток.");
+        }
+    }
+
+    // Загружаем случайный товар при загрузке страницы
+    window.addEventListener('load', loadRandomProduct);
+</script>
 </body>
 </html>
+
