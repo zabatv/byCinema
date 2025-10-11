@@ -226,13 +226,28 @@
             return card;
         }
 
-        // Основная функция для загрузки всех товаров
-        async function loadAllProducts() {
+        // Функция для перемешивания массива (алгоритм Фишера-Йетса)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Основная функция для загрузки всех товаров в случайном порядке
+        async function loadAllProductsRandomly() {
             const productGrid = document.getElementById('product-grid');
 
-            // Загружаем все JSON-файлы от 1 до 8
-            for (let i = 1; i <= 8; i++) {
-                const fileName = `${i}.json`;
+            // Создаем массив чисел от 1 до 8
+            const fileNumbers = Array.from({ length: 8 }, (_, i) => i + 1);
+
+            // Перемешиваем массив
+            const shuffledFileNumbers = shuffleArray(fileNumbers);
+
+            // Загружаем все JSON-файлы в случайном порядке
+            for (const number of shuffledFileNumbers) {
+                const fileName = `${number}.json`;
                 const productData = await loadJSON(fileName);
 
                 if (productData) {
@@ -243,7 +258,7 @@
         }
 
         // Загружаем все товары при загрузке страницы
-        window.addEventListener('load', loadAllProducts);
+        window.addEventListener('load', loadAllProductsRandomly);
     </script>
 </body>
 </html>
