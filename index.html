@@ -6,134 +6,129 @@
     <title>Каталог товаров</title>
     <style>
         :root {
-            --main-bg: #f8f4e3; /* Светло-бежевый */
-            --text-color: #4d3c2a; /* Темно-коричневый */
-            --accent-color: #d4af37; /* Золотистый */
-            --card-bg: #ffffff; /* Белый */
-            --hover-scale: 1.05; /* Масштаб при наведении */
+            --dark-navy: #1a1f2a;      /* Тёмно-синий */
+            --slate-gray: #4a5568;     /* Сланцево-серый */
+            --soft-blue: #90b4ce;      /* Мягкий голубой */
+            --coral-red: #ff6b6b;      /* Коралловый красный */
+            --deep-red: #c73e3e;       /* Глубокий красный */
+            --off-white: #ffffff;      /* Белый фон для контента */
         }
 
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--main-bg);
-            color: var(--text-color);
+            background-color: var(--off-white);
+            color: var(--dark-navy);
         }
-
+        
         .header {
-            background-color: var(--accent-color);
+            background-color: var(--dark-navy);
             padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-
+        
         .header .icons {
             display: flex;
             gap: 15px;
         }
-
+        
         .header .search-bar {
             flex-grow: 1;
             margin: 0 15px;
-            background-color: var(--card-bg);
+            background-color: var(--slate-gray);
             border-radius: 20px;
             padding: 5px 15px;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-
+        
         .header .search-bar input {
             border: none;
             background: transparent;
             outline: none;
             flex-grow: 1;
             padding: 5px;
-            color: var(--text-color);
+            color: var(--off-white);
         }
-
+        
         .header .search-bar input::placeholder {
-            color: rgba(77, 60, 42, 0.7);
+            color: rgba(255, 255, 255, 0.7);
         }
-
+        
         .main-content {
             padding: 20px;
-            padding-bottom: 70px;
+            padding-bottom: 70px; /* Добавлен отступ снизу, чтобы контент не скрывался за фиксированным футером */
         }
-
+        
         .product-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
-
+        
         .product-card {
-            background-color: var(--card-bg);
+            background-color: var(--slate-gray);
             height: 200px;
             position: relative;
             overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            border-radius: px;
         }
-
-        .product-card:hover {
-            transform: scale(var(--hover-scale));
-        }
-
+        
         .product-card img {
             width: 100%;
             height: calc(100% - 60px);
             object-fit: cover;
             display: block;
         }
-
+        
         .product-info {
             position: absolute;
             bottom: 0;
             left: 0;
             right: 0;
             height: 60px;
-            padding: 10px;
-            background-color: var(--card-bg);
+            padding: px;
+            background-color: var(--off-white);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            border-top: 2px solid var(--accent-color);
+            border-top: 2px solid var(--coral-red);
         }
-
+        
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .clothing-label {
             font-size: 12px;
-            color: var(--text-color);
+            color: var(--slate-gray);
             margin-left: 5px;
         }
-
+        
         .price-tag {
             font-size: 16px;
-            color: var(--text-color);
+            color: var(--deep-red);
             font-weight: bold;
             margin-right: 5px;
         }
-
+        
         .product-title {
             font-size: 12px;
-            color: var(--text-color);
+            color: var(--dark-navy);
             margin: 0 0 2px 0;
             word-wrap: break-word;
             line-height: 1;
         }
-
+        
         .footer {
-            background-color: var(--accent-color);
+            background-color: var(--coral-red);
             padding: 10px;
             display: flex;
             justify-content: space-around;
@@ -141,11 +136,12 @@
             bottom: 0;
             left: 0;
             right: 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
         }
-
+        
         .footer i {
             font-size: 24px;
-            color: var(--text-color);
+            color: var(--off-white);
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -153,23 +149,23 @@
 <body>
     <div class="header">
         <div class="icons">
-            <i class="fas fa-map-marker-alt"></i>
+            <i class="fas fa-map-marker-alt" style="color: var(--off-white);"></i>
         </div>
         <div class="search-bar">
-            <i class="fas fa-search"></i>
+            <i class="fas fa-search" style="color: var(--off-white); margin-right: px;"></i>
             <input type="text" placeholder="Поиск...">
         </div>
         <div class="icons">
-            <i class="far fa-bell"></i>
+            <i class="far fa-bell" style="color: var(--off-white);"></i>
         </div>
     </div>
-
+    
     <div class="main-content">
         <div class="product-grid" id="product-grid">
             <!-- Карточки товаров будут генерироваться здесь -->
         </div>
     </div>
-
+    
     <div class="footer">
         <i class="fas fa-home"></i>
         <i class="fas fa-bars"></i>
