@@ -100,7 +100,7 @@
             // Добавляем обработчик клика на карточку
             card.addEventListener('click', () => {
                 // Передаем идентификатор товара через URL-параметр
-                window.location.href = `/product.html?productId=${product.id}`;
+                window.location.href = `/product.html?productId=${product.img}`;
             });
 
             return card;
@@ -133,3 +133,4 @@
     </script>
 </body>
 </html>
+
