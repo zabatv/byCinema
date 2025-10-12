@@ -6,12 +6,12 @@
     <title>Каталог товаров</title>
     <style>
         :root {
-            --dark-navy: #1a1f2a;      /* Тёмно-синий */
-            --slate-gray: #4a5568;     /* Сланцево-серый */
-            --soft-blue: #90b4ce;      /* Мягкий голубой */
-            --coral-red: #ff6b6b;      /* Коралловый красный */
-            --deep-red: #c73e3e;       /* Глубокий красный */
-            --off-white: #ffffff;      /* Белый фон для контента */
+            --dark-navy: #1a1f2a;
+            --slate-gray: #4a5568;
+            --soft-blue: #90b4ce;
+            --coral-red: #ff6b6b;
+            --deep-red: #c73e3e;
+            --off-white: #ffffff;
         }
 
         body {
@@ -61,7 +61,7 @@
         
         .main-content {
             padding: 20px;
-            padding-bottom: 70px; /* Добавлен отступ снизу, чтобы контент не скрывался за фиксированным футером */
+            padding-bottom: 70px;
         }
         
         .product-grid {
@@ -144,7 +144,7 @@
             color: var(--off-white);
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css  ">
 </head>
 <body>
     <div class="header">
@@ -162,7 +162,6 @@
     
     <div class="main-content">
         <div class="product-grid" id="product-grid">
-            <!-- Карточки товаров будут генерироваться здесь -->
         </div>
     </div>
     
@@ -174,7 +173,19 @@
     </div>
 
     <script>
-        // Функция для загрузки JSON-файла
+        function isPC() {
+            return !/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        window.addEventListener('load', () => {
+            if (isPC()) {
+                const productGrid = document.getElementById('product-grid');
+                productGrid.innerHTML = '<h1 style="text-align: center; color: red;">Эта страница недоступна на ПК</h1>';
+            } else {
+                loadAllProductsRandomly();
+            }
+        });
+
         async function loadJSON(filename) {
             try {
                 const response = await fetch(`DATA/${filename}`);
@@ -185,17 +196,14 @@
             }
         }
 
-        // Функция для генерации карточки товара
         function createProductCard(product) {
             const card = document.createElement('div');
             card.className = 'product-card';
 
-            // Создаем изображение
             const img = document.createElement('img');
-            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
+            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg';
             img.alt = product.name;
 
-            // Создаем блок с информацией о товаре
             const info = document.createElement('div');
             info.className = 'product-info';
 
@@ -226,7 +234,6 @@
             return card;
         }
 
-        // Функция для перемешивания массива (алгоритм Фишера-Йетса)
         function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -235,17 +242,12 @@
             return array;
         }
 
-        // Основная функция для загрузки всех товаров в случайном порядке
         async function loadAllProductsRandomly() {
             const productGrid = document.getElementById('product-grid');
 
-            // Создаем массив чисел от 1 до 8
             const fileNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
-
-            // Перемешиваем массив
             const shuffledFileNumbers = shuffleArray(fileNumbers);
 
-            // Загружаем все JSON-файлы в случайном порядке
             for (const number of shuffledFileNumbers) {
                 const fileName = `${number}.json`;
                 const productData = await loadJSON(fileName);
@@ -256,9 +258,6 @@
                 }
             }
         }
-
-        // Загружаем все товары при загрузке страницы
-        window.addEventListener('load', loadAllProductsRandomly);
     </script>
 </body>
 </html>
