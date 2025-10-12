@@ -143,6 +143,27 @@
             font-size: 24px;
             color: var(--off-white);
         }
+
+        /* Стили для сообщения об ошибке */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--off-white);
+            text-align: center;
+        }
+
+        .error-container img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 24px;
+            color: #888;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css  ">
 </head>
@@ -179,8 +200,13 @@
 
         window.addEventListener('load', () => {
             if (isPC()) {
-                const productGrid = document.getElementById('product-grid');
-                productGrid.innerHTML = '<h1 style="text-align: center; color: red;">Эта страница недоступна на ПК</h1>';
+                // Очищаем весь контент страницы
+                document.body.innerHTML = `
+                    <div class="error-container">
+                        <img src="images/error.jpg" alt="Ошибка">
+                        <div class="error-message">Эта страница недоступна на ПК</div>
+                    </div>
+                `;
             } else {
                 loadAllProductsRandomly();
             }
