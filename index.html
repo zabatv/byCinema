@@ -5,44 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог товаров</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
         :root {
-            --main-bg: #f8f4e3; /* Светло-бежевый */
-            --text-color: #4d3c2a; /* Темно-коричневый */
-            --accent-color: #d4af37; /* Золотистый */
-            --card-bg: #ffffff; /* Белый */
-            --hover-scale: 1.05; /* Масштаб при наведении */
+            --pink: #ff69b4;
+            --yellow: #ffff00;
+            --blue: #0000ff;
+            --purple: #8a2be2;
+            --black: #000000;
         }
 
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Press Start 2P', cursive;
             margin: 0;
             padding: 0;
-            background-color: var(--main-bg);
-            color: var(--text-color);
+            background-color: var(--pink);
+            color: var(--yellow);
+            overflow-x: hidden;
         }
 
+        /* Header */
         .header {
-            background-color: var(--accent-color);
+            background-color: var(--purple);
             padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
         }
 
-        .header .icons {
-            display: flex;
-            gap: 15px;
+        .header .icons i {
+            font-size: 24px;
+            color: var(--yellow);
+            text-shadow: 0 0 5px var(--blue);
         }
 
         .header .search-bar {
             flex-grow: 1;
             margin: 0 15px;
-            background-color: var(--card-bg);
-            border-radius: 20px;
+            background-color: var(--black);
+            border-radius: 10px;
             padding: 5px 15px;
             display: flex;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
 
         .header .search-bar input {
@@ -51,16 +56,19 @@
             outline: none;
             flex-grow: 1;
             padding: 5px;
-            color: var(--text-color);
+            color: var(--yellow);
+            font-family: 'Press Start 2P', cursive;
         }
 
         .header .search-bar input::placeholder {
-            color: rgba(77, 60, 42, 0.7);
+            color: var(--yellow);
+            opacity: 0.7;
         }
 
+        /* Main Content */
         .main-content {
             padding: 20px;
-            padding-bottom: 70px;
+            padding-bottom: 70px; /* Отступ для футера */
         }
 
         .product-grid {
@@ -70,17 +78,17 @@
         }
 
         .product-card {
-            background-color: var(--card-bg);
+            background: linear-gradient(135deg, var(--yellow), var(--blue));
             height: 200px;
             position: relative;
             overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
             transition: transform 0.3s ease;
         }
 
         .product-card:hover {
-            transform: scale(var(--hover-scale));
+            transform: scale(1.05);
         }
 
         .product-card img {
@@ -97,12 +105,12 @@
             right: 0;
             height: 60px;
             padding: 10px;
-            background-color: var(--card-bg);
+            background-color: var(--black);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            border-top: 2px solid var(--accent-color);
+            border-top: 2px solid var(--yellow);
         }
 
         .info-row {
@@ -113,27 +121,28 @@
 
         .clothing-label {
             font-size: 12px;
-            color: var(--text-color);
+            color: var(--yellow);
             margin-left: 5px;
         }
 
         .price-tag {
             font-size: 16px;
-            color: var(--text-color);
+            color: var(--blue);
             font-weight: bold;
             margin-right: 5px;
         }
 
         .product-title {
             font-size: 12px;
-            color: var(--text-color);
+            color: var(--yellow);
             margin: 0 0 2px 0;
             word-wrap: break-word;
             line-height: 1;
         }
 
+        /* Footer */
         .footer {
-            background-color: var(--accent-color);
+            background-color: var(--purple);
             padding: 10px;
             display: flex;
             justify-content: space-around;
@@ -141,11 +150,41 @@
             bottom: 0;
             left: 0;
             right: 0;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
         }
 
         .footer i {
             font-size: 24px;
-            color: var(--text-color);
+            color: var(--yellow);
+            text-shadow: 0 0 5px var(--blue);
+        }
+
+        /* Retro Noise Animation */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 5px,
+                rgba(255, 255, 255, 0.1) 5px,
+                rgba(255, 255, 255, 0.1) 10px
+            );
+            animation: noise 0.5s infinite steps(10);
+            z-index: -1;
+        }
+
+        @keyframes noise {
+            0%, 100% { transform: translate(0, 0); }
+            10% { transform: translate(-2px, 2px); }
+            20% { transform: translate(3px, -3px); }
+            30% { transform: translate(-4px, 4px); }
+            40% { transform: translate(5px, -5px); }
+            50% { transform: translate(-6px, 6px); }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -196,7 +235,7 @@
 
             // Создаем изображение
             const img = document.createElement('img');
-            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
+            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg';
             img.alt = product.name;
 
             // Создаем блок с информацией о товаре
