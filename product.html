@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Карточка товара</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="product-details"></div>
+
+    <script>
+        // Функция для получения параметра из URL
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        async function loadJSON(filename) {
+            try {
+                const response = await fetch(`DATA/${filename}.json`);
+                if (!response.ok) throw new Error(`Ошибка при загрузке файла ${filename}`);
+                return await response.json();
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        function displayProductDetails(product) {
+            const container = document.getElementById('product-details');
+
+            const img = document.createElement('img');
+            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg';
+            img.alt = product.name;
+
+            const title = document.createElement('h1');
+            title.textContent = product.name;
+
+            const description = document.createElement('p');
+            description.textContent = product.Description || 'Описание отсутствует';
+
+            const price = document.createElement('div');
+            price.className = 'price-tag';
+            price.textContent = `${product.Price} ₽`;
+
+            container.appendChild(img);
+            container.appendChild(title);
+            container.appendChild(description);
+            container.appendChild(price);
+        }
+
+        async function init() {
+            const productId = getQueryParam('productId');
+            if (productId) {
+                const productData = await loadJSON(productId);
+                if (productData) {
+                    displayProductDetails(productData);
+                } else {
+                    document.getElementById('product-details').textContent = 'Товар не найден';
+                }
+            } else {
+                document.getElementById('product-details').textContent = 'Идентификатор товара не указан';
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
