@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог товаров</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css  ">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <div class="header">
@@ -13,7 +13,7 @@
             <i class="fas fa-map-marker-alt" style="color: var(--off-white);"></i>
         </div>
         <div class="search-bar">
-            <i class="fas fa-search" style="color: var(--off-white); margin-right: px;"></i>
+            <i class="fas fa-search" style="color: var(--off-white); margin-right: 10px;"></i>
             <input type="text" placeholder="Поиск...">
         </div>
         <div class="icons">
@@ -97,6 +97,12 @@
             card.appendChild(img);
             card.appendChild(info);
 
+            // Добавляем обработчик клика на карточку
+            card.addEventListener('click', () => {
+                // Передаем идентификатор товара через URL-параметр
+                window.location.href = `/product.html?productId=${product.id}`;
+            });
+
             return card;
         }
 
@@ -127,6 +133,3 @@
     </script>
 </body>
 </html>
-
-
-
