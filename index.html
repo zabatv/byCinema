@@ -5,99 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Каталог товаров</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
-
         :root {
-            --pink: #ff69b4;
-            --yellow: #ffff00;
-            --blue: #0000ff;
-            --purple: #8a2be2;
-            --black: #000000;
+            --light-green: #e8f3e8;      /* Светло-зеленый */
+            --dark-green: #2e7d32;       /* Темно-зеленый */
+            --brown: #8b4513;            /* Коричневый */
+            --beige: #f5f5dc;            /* Бежевый */
         }
 
         body {
-            font-family: 'Press Start 2P', cursive;
+            font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: var(--pink);
-            color: var(--yellow);
-            overflow-x: hidden;
+            background-color: var(--light-green);
+            color: var(--dark-green);
         }
-
-        /* Header */
+        
         .header {
-            background-color: var(--purple);
+            background: url('https://i.imgur.com/3ZQZqLm.jpg') repeat; /* Текстура древесины */
             padding: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid var(--brown);
         }
-
-        .header .icons i {
-            font-size: 24px;
-            color: var(--yellow);
-            text-shadow: 0 0 5px var(--blue);
+        
+        .header .icons {
+            display: flex;
+            gap: 15px;
         }
-
+        
         .header .search-bar {
             flex-grow: 1;
             margin: 0 15px;
-            background-color: var(--black);
-            border-radius: 10px;
+            background-color: var(--beige);
+            border-radius: 20px;
             padding: 5px 15px;
             display: flex;
             align-items: center;
+            transition: transform 0.3s ease;
         }
-
+        
+        .header .search-bar:hover {
+            transform: scale(1.05); /* Анимация увеличения при наведении */
+        }
+        
         .header .search-bar input {
             border: none;
             background: transparent;
             outline: none;
             flex-grow: 1;
             padding: 5px;
-            color: var(--yellow);
-            font-family: 'Press Start 2P', cursive;
+            color: var(--dark-green);
         }
-
+        
         .header .search-bar input::placeholder {
-            color: var(--yellow);
-            opacity: 0.7;
+            color: rgba(46, 125, 50, 0.7);
         }
-
-        /* Main Content */
+        
         .main-content {
             padding: 20px;
-            padding-bottom: 70px; /* Отступ для футера */
+            padding-bottom: 70px; /* Отступ снизу для футера */
         }
-
+        
         .product-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
-
+        
         .product-card {
-            background: linear-gradient(135deg, var(--yellow), var(--blue));
+            background: url('https://i.imgur.com/3ZQZqLm.jpg') repeat; /* Текстура древесины */
             height: 200px;
             position: relative;
             overflow: hidden;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
         }
-
+        
         .product-card:hover {
-            transform: scale(1.05);
+            transform: scale(1.05); /* Анимация увеличения при наведении */
         }
-
+        
         .product-card img {
             width: 100%;
             height: calc(100% - 60px);
             object-fit: cover;
             display: block;
         }
-
+        
         .product-info {
             position: absolute;
             bottom: 0;
@@ -105,44 +101,43 @@
             right: 0;
             height: 60px;
             padding: 10px;
-            background-color: var(--black);
+            background-color: var(--beige);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             box-sizing: border-box;
-            border-top: 2px solid var(--yellow);
+            border-top: 2px solid var(--brown);
         }
-
+        
         .info-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
         .clothing-label {
             font-size: 12px;
-            color: var(--yellow);
+            color: var(--dark-green);
             margin-left: 5px;
         }
-
+        
         .price-tag {
             font-size: 16px;
-            color: var(--blue);
+            color: var(--brown);
             font-weight: bold;
             margin-right: 5px;
         }
-
+        
         .product-title {
             font-size: 12px;
-            color: var(--yellow);
+            color: var(--dark-green);
             margin: 0 0 2px 0;
             word-wrap: break-word;
             line-height: 1;
         }
-
-        /* Footer */
+        
         .footer {
-            background-color: var(--purple);
+            background-color: var(--brown);
             padding: 10px;
             display: flex;
             justify-content: space-around;
@@ -150,41 +145,17 @@
             bottom: 0;
             left: 0;
             right: 0;
-            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
         }
-
+        
         .footer i {
             font-size: 24px;
-            color: var(--yellow);
-            text-shadow: 0 0 5px var(--blue);
+            color: var(--beige);
+            transition: transform 0.3s ease;
         }
-
-        /* Retro Noise Animation */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                transparent,
-                transparent 5px,
-                rgba(255, 255, 255, 0.1) 5px,
-                rgba(255, 255, 255, 0.1) 10px
-            );
-            animation: noise 0.5s infinite steps(10);
-            z-index: -1;
-        }
-
-        @keyframes noise {
-            0%, 100% { transform: translate(0, 0); }
-            10% { transform: translate(-2px, 2px); }
-            20% { transform: translate(3px, -3px); }
-            30% { transform: translate(-4px, 4px); }
-            40% { transform: translate(5px, -5px); }
-            50% { transform: translate(-6px, 6px); }
+        
+        .footer i:hover {
+            transform: scale(1.2); /* Анимация увеличения при наведении */
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -192,23 +163,23 @@
 <body>
     <div class="header">
         <div class="icons">
-            <i class="fas fa-map-marker-alt"></i>
+            <i class="fas fa-map-marker-alt" style="color: var(--dark-green);"></i>
         </div>
         <div class="search-bar">
-            <i class="fas fa-search"></i>
+            <i class="fas fa-search" style="color: var(--dark-green); margin-right: 10px;"></i>
             <input type="text" placeholder="Поиск...">
         </div>
         <div class="icons">
-            <i class="far fa-bell"></i>
+            <i class="far fa-bell" style="color: var(--dark-green);"></i>
         </div>
     </div>
-
+    
     <div class="main-content">
         <div class="product-grid" id="product-grid">
             <!-- Карточки товаров будут генерироваться здесь -->
         </div>
     </div>
-
+    
     <div class="footer">
         <i class="fas fa-home"></i>
         <i class="fas fa-bars"></i>
@@ -235,7 +206,7 @@
 
             // Создаем изображение
             const img = document.createElement('img');
-            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg';
+            img.src = product.img ? `images/${product.img}.jpg` : 'images/default.jpg'; // Используем номер изображения из JSON
             img.alt = product.name;
 
             // Создаем блок с информацией о товаре
