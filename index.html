@@ -75,7 +75,7 @@
             height: 200px;
             position: relative;
             overflow: hidden;
-            border-radius: 8px;
+            border-radius: px;
         }
         
         .product-card img {
@@ -91,7 +91,7 @@
             left: 0;
             right: 0;
             height: 60px;
-            padding: 8px;
+            padding: px;
             background-color: var(--off-white);
             display: flex;
             flex-direction: column;
@@ -152,7 +152,7 @@
             <i class="fas fa-map-marker-alt" style="color: var(--off-white);"></i>
         </div>
         <div class="search-bar">
-            <i class="fas fa-search" style="color: var(--off-white); margin-right: 8px;"></i>
+            <i class="fas fa-search" style="color: var(--off-white); margin-right: px;"></i>
             <input type="text" placeholder="Поиск...">
         </div>
         <div class="icons">
@@ -240,7 +240,7 @@
             const productGrid = document.getElementById('product-grid');
 
             // Создаем массив чисел от 1 до 8
-            const fileNumbers = Array.from({ length: 8 }, (_, i) => i + 1);
+            const fileNumbers = Array.from({ length: 40 }, (_, i) => i + 1);
 
             // Перемешиваем массив
             const shuffledFileNumbers = shuffleArray(fileNumbers);
@@ -262,3 +262,4 @@
     </script>
 </body>
 </html>
+
