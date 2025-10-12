@@ -1,0 +1,159 @@
+:root {
+            --dark-navy: #1a1f2a;
+            --slate-gray: #4a5568;
+            --soft-blue: #90b4ce;
+            --coral-red: #ff6b6b;
+            --deep-red: #c73e3e;
+            --off-white: #ffffff;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--off-white);
+            color: var(--dark-navy);
+        }
+        
+        .header {
+            background-color: var(--dark-navy);
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .header .icons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header .search-bar {
+            flex-grow: 1;
+            margin: 0 15px;
+            background-color: var(--slate-gray);
+            border-radius: 20px;
+            padding: 5px 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .header .search-bar input {
+            border: none;
+            background: transparent;
+            outline: none;
+            flex-grow: 1;
+            padding: 5px;
+            color: var(--off-white);
+        }
+        
+        .header .search-bar input::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .main-content {
+            padding: 20px;
+            padding-bottom: 70px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .product-card {
+            background-color: var(--slate-gray);
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+            border-radius: px;
+        }
+        
+        .product-card img {
+            width: 100%;
+            height: calc(100% - 60px);
+            object-fit: cover;
+            display: block;
+        }
+        
+        .product-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            padding: px;
+            background-color: var(--off-white);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-sizing: border-box;
+            border-top: 2px solid var(--coral-red);
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .clothing-label {
+            font-size: 12px;
+            color: var(--slate-gray);
+            margin-left: 5px;
+        }
+        
+        .price-tag {
+            font-size: 16px;
+            color: var(--deep-red);
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        
+        .product-title {
+            font-size: 12px;
+            color: var(--dark-navy);
+            margin: 0 0 2px 0;
+            word-wrap: break-word;
+            line-height: 1;
+        }
+        
+        .footer {
+            background-color: var(--coral-red);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .footer i {
+            font-size: 24px;
+            color: var(--off-white);
+        }
+
+        /* Стили для сообщения об ошибке */
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: var(--off-white);
+            text-align: center;
+        }
+
+        .error-container img {
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            font-size: 24px;
+            color: #888;
+        }
