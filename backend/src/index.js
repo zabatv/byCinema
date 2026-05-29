@@ -32,23 +32,6 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-async function downloadImage(url, subdir, index) {
-  const filename = `${index}.jpg`;
-  const dir = path.join(__dirname, '..', 'uploads', subdir);
-  const filepath = path.join(dir, filename);
-  try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-    const buf = Buffer.from(await resp.arrayBuffer());
-    fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(filepath, buf);
-    return `/uploads/${subdir}/${filename}`;
-  } catch (err) {
-    console.warn(`Failed to download ${url}: ${err.message}`);
-    return url;
-  }
-}
-
 async function autoSeed() {
   try {
     const db = getDb();
@@ -60,20 +43,14 @@ async function autoSeed() {
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['admin@bycinema.com', hp, 'Admin', 'admin']);
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['user@test.com', bcrypt.hashSync('user123', 10), 'Test User', 'user']);
 
-    const movieSources = [
-      { title:'Космическая сага',slug:'kosmicheskaya-saga',desc:'Эпическая космическая опера',img:'https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400',year:'1977',genre:'Фантастика' },
-      { title:'Волшебный мир',slug:'volshebnyy-mir',desc:'Школа магии и волшебства',img:'https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?w=400',year:'2001',genre:'Фэнтези' },
-      { title:'Тёмный рыцарь',slug:'temnyy-rytsar',desc:'Борьба с преступностью в Готэме',img:'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400',year:'2005',genre:'Экшн' },
-      { title:'Средиземье: Кольцо',slug:'sredizemye-koltso',desc:'Хоббит уничтожает кольцо',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',year:'2001',genre:'Фэнтези' },
-      { title:'Лабиринт разума',slug:'labirint-razuma',desc:'Путешествие в мир снов',img:'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',year:'2010',genre:'Триллер' },
-      { title:'Королевство драконов',slug:'korolevstvo-drakonov',desc:'Викинг и его дракон',img:'https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400',year:'2010',genre:'Анимация' },
+    const movies = [
+      ['Космическая сага','kosmicheskaya-saga','Эпическая космическая опера','https://placehold.co/400x600/1a1a2e/e94560?text=Space+Saga','1977','Фантастика'],
+      ['Волшебный мир','volshebnyy-mir','Школа магии и волшебства','https://placehold.co/400x600/2d1b69/ffd700?text=Magic+World','2001','Фэнтези'],
+      ['Тёмный рыцарь','temnyy-rytsar','Борьба с преступностью в Готэме','https://placehold.co/400x600/1a1a1a/808080?text=Dark+Knight','2005','Экшн'],
+      ['Средиземье: Кольцо','sredizemye-koltso','Хоббит уничтожает кольцо','https://placehold.co/400x600/2d5a27/d4a574?text=Middle+Earth','2001','Фэнтези'],
+      ['Лабиринт разума','labirint-razuma','Путешествие в мир снов','https://placehold.co/400x600/16213e/0f3460?text=Inception','2010','Триллер'],
+      ['Королевство драконов','korolevstvo-drakonov','Викинг и его дракон','https://placehold.co/400x600/1a3a2e/ff6b35?text=Dragon+Kingdom','2010','Анимация'],
     ];
-    const movies = [];
-    for (let i = 0; i < movieSources.length; i++) {
-      const s = movieSources[i];
-      const posterUrl = await downloadImage(s.img, 'posters', `movie-${i}`);
-      movies.push([s.title, s.slug, s.desc, posterUrl, s.year, s.genre]);
-    }
     for (const m of movies) db.insert('INSERT INTO movies (title,slug,description,posterUrl,year,genre) VALUES (?,?,?,?,?,?)', m);
 
     const cols = [
@@ -83,40 +60,36 @@ async function autoSeed() {
     ];
     for (const c of cols) db.insert('INSERT INTO collections (name,slug,movieId) VALUES (?,?,?)', c);
 
-    const productSources = [
-      ['Футболка Повстанец','footbolka-povstanec',249000,'Футболка','S,M,L,XL','Белый,Чёрный','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',1,1,50],
-      ['Худи Галактика','hudi-galaktika',459000,'Худи','M,L,XL','Тёмно-синий,Чёрный','https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',1,1,30],
-      ['Куртка лётчика','kurtka-letchika',899000,'Куртка','M,L,XL','Коричневый,Чёрный','https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',2,1,15],
-      ['Кепка Империя','keepka-imperiya',149000,'Кепка','S,M,L','Чёрный,Белый','https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400',2,1,100],
-      ['Свитер факультета','sviter-fakulteta',399000,'Свитер','S,M,L,XL','Красный,Зелёный,Синий','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400',3,2,40],
-      ['Мантия волшебника','mantiya-volshebnika',599000,'Куртка','S,M,L','Чёрный,Тёмно-синий','https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=400',3,2,20],
-      ['Шарф Волшебство','sharf-volshebstvo',199000,'Аксессуар','S,M','Красный,Зелёный','https://images.unsplash.com/photo-1601924994987-69e26d50dc26?w=400',4,2,75],
-      ['Футболка Магическая','footbolka-magicheskaya',229000,'Футболка','S,M,L,XL','Белый,Чёрный,Серый','https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400',4,2,60],
-      ['Футболка Тёмный силуэт','footbolka-temnyy-siluet',259000,'Футболка','S,M,L,XL,XXL','Чёрный,Серый','https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400',5,3,45],
-      ['Плащ детектива','plashch-detektiva',799000,'Куртка','M,L,XL','Чёрный,Тёмно-синий','https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',5,3,12],
-      ['Худи Готэм','hudi-gotem',429000,'Худи','S,M,L,XL','Чёрный,Серый','https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',6,3,35],
-      ['Значок Бэт-символ','znachok-bet-simvol',59000,'Аксессуар','S,M','Чёрный,Жёлтый','https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400',6,3,200],
-      ['Хоббитский жилет','hobbitskiy-zhilet',549000,'Одежда','S,M,L','Зелёный,Коричневый','https://images.unsplash.com/photo-1593030761757-71fae45fa0e7?w=400',7,4,18],
-      ['Эльфийский свитер','elfiyskiy-sviter',449000,'Свитер','S,M,L,XL','Белый,Зелёный,Синий','https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=400',8,4,25],
-      ['Футболка Кольцо','footbolka-koltso',239000,'Футболка','S,M,L,XL','Чёрный,Белый,Золотой','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',7,4,55],
-      ['Плащ странника','plashch-strannika',699000,'Куртка','M,L,XL','Серый,Коричневый,Зелёный','https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',8,4,10],
-      ['Костюм Сновидец','kostyum-snovidec',899000,'Куртка','S,M,L,XL','Чёрный,Синий','https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',9,5,20],
-      ['Футболка Лабиринт','footbolka-labirint',249000,'Футболка','S,M,L,XL,XXL','Белый,Чёрный','https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400',9,5,65],
-      ['Худи Подсознание','hudi-podsoznanie',449000,'Худи','M,L,XL','Чёрный,Серый,Синий','https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',10,5,30],
-      ['Кепка Реальность','keepka-realnost',159000,'Кепка','S,M,L','Чёрный,Белый,Красный','https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=400',10,5,80],
-      ['Футболка Дракон','footbolka-drakon',239000,'Футболка','S,M,L,XL','Чёрный,Белый,Красный','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',11,6,70],
-      ['Худи Верхом на драконе','hudi-verhom-na-drakone',439000,'Худи','S,M,L,XL','Чёрный,Синий,Зелёный','https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',12,6,28],
-      ['Штаны Викинг','shtany-viking',399000,'Штаны','S,M,L,XL','Коричневый,Чёрный,Серый','https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400',11,6,22],
-      ['Брелок Драконье яйцо','brelok-drakone-yayco',79000,'Аксессуар','S','Зелёный,Красный,Синий','https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400',12,6,150],
+    const products = [
+      ['Футболка Повстанец','footbolka-povstanec',249000,'Футболка','S,M,L,XL','Белый,Чёрный','https://placehold.co/400x500/1a1a2e/fff?text=T-Shirt',1,1,50],
+      ['Худи Галактика','hudi-galaktika',459000,'Худи','M,L,XL','Тёмно-синий,Чёрный','https://placehold.co/400x500/1a1a2e/e94560?text=Hoodie',1,1,30],
+      ['Куртка лётчика','kurtka-letchika',899000,'Куртка','M,L,XL','Коричневый,Чёрный','https://placehold.co/400x500/2d1b69/ffd700?text=Jacket',2,1,15],
+      ['Кепка Империя','keepka-imperiya',149000,'Кепка','S,M,L','Чёрный,Белый','https://placehold.co/400x500/1a1a1a/fff?text=Cap',2,1,100],
+      ['Свитер факультета','sviter-fakulteta',399000,'Свитер','S,M,L,XL','Красный,Зелёный,Синий','https://placehold.co/400x500/2d1b69/e94560?text=Sweater',3,2,40],
+      ['Мантия волшебника','mantiya-volshebnika',599000,'Куртка','S,M,L','Чёрный,Тёмно-синий','https://placehold.co/400x500/1a1a2e/4a4a8a?text=Robe',3,2,20],
+      ['Шарф Волшебство','sharf-volshebstvo',199000,'Аксессуар','S,M','Красный,Зелёный','https://placehold.co/400x500/ff6b35/fff?text=Scarf',4,2,75],
+      ['Футболка Магическая','footbolka-magicheskaya',229000,'Футболка','S,M,L,XL','Белый,Чёрный,Серый','https://placehold.co/400x500/2d1b69/ffd700?text=Magic+Shirt',4,2,60],
+      ['Футболка Тёмный силуэт','footbolka-temnyy-siluet',259000,'Футболка','S,M,L,XL,XXL','Чёрный,Серый','https://placehold.co/400x500/1a1a1a/808080?text=Dark+Shirt',5,3,45],
+      ['Плащ детектива','plashch-detektiva',799000,'Куртка','M,L,XL','Чёрный,Тёмно-синий','https://placehold.co/400x500/1a1a1a/ffd700?text=Cloak',5,3,12],
+      ['Худи Готэм','hudi-gotem',429000,'Худи','S,M,L,XL','Чёрный,Серый','https://placehold.co/400x500/1a1a1a/e94560?text=Gotham+Hoodie',6,3,35],
+      ['Значок Бэт-символ','znachok-bet-simvol',59000,'Аксессуар','S,M','Чёрный,Жёлтый','https://placehold.co/400x500/ffd700/1a1a1a?text=Badge',6,3,200],
+      ['Хоббитский жилет','hobbitskiy-zhilet',549000,'Одежда','S,M,L','Зелёный,Коричневый','https://placehold.co/400x500/2d5a27/d4a574?text=Vest',7,4,18],
+      ['Эльфийский свитер','elfiyskiy-sviter',449000,'Свитер','S,M,L,XL','Белый,Зелёный,Синий','https://placehold.co/400x500/2d5a27/fff?text=Elven+Sweater',8,4,25],
+      ['Футболка Кольцо','footbolka-koltso',239000,'Футболка','S,M,L,XL','Чёрный,Белый,Золотой','https://placehold.co/400x500/d4a574/1a1a1a?text=Ring+Shirt',7,4,55],
+      ['Плащ странника','plashch-strannika',699000,'Куртка','M,L,XL','Серый,Коричневый,Зелёный','https://placehold.co/400x500/4a3728/d4a574?text=Traveler+Cloak',8,4,10],
+      ['Костюм Сновидец','kostyum-snovidec',899000,'Куртка','S,M,L,XL','Чёрный,Синий','https://placehold.co/400x500/16213e/0f3460?text=Dream+Suit',9,5,20],
+      ['Футболка Лабиринт','footbolka-labirint',249000,'Футболка','S,M,L,XL,XXL','Белый,Чёрный','https://placehold.co/400x500/16213e/e94560?text=Labyrinth',9,5,65],
+      ['Худи Подсознание','hudi-podsoznanie',449000,'Худи','M,L,XL','Чёрный,Серый,Синий','https://placehold.co/400x500/16213e/0f3460?text=Subconscious',10,5,30],
+      ['Кепка Реальность','keepka-realnost',159000,'Кепка','S,M,L','Чёрный,Белый,Красный','https://placehold.co/400x500/0f3460/fff?text=Reality+Cap',10,5,80],
+      ['Футболка Дракон','footbolka-drakon',239000,'Футболка','S,M,L,XL','Чёрный,Белый,Красный','https://placehold.co/400x500/1a3a2e/ff6b35?text=Dragon+Shirt',11,6,70],
+      ['Худи Верхом на драконе','hudi-verhom-na-drakone',439000,'Худи','S,M,L,XL','Чёрный,Синий,Зелёный','https://placehold.co/400x500/1a3a2e/ff6b35?text=Dragon+Hoodie',12,6,28],
+      ['Штаны Викинг','shtany-viking',399000,'Штаны','S,M,L,XL','Коричневый,Чёрный,Серый','https://placehold.co/400x500/4a3728/d4a574?text=Viking+Pants',11,6,22],
+      ['Брелок Драконье яйцо','brelok-drakone-yayco',79000,'Аксессуар','S','Зелёный,Красный,Синий','https://placehold.co/400x500/ff6b35/fff?text=Dragon+Egg',12,6,150],
     ];
-    const products = [];
-    for (let i = 0; i < productSources.length; i++) {
-      const p = productSources[i];
-      const imageUrl = await downloadImage(p[6], 'products', `product-${i}`);
-      products.push([p[0],p[1],p[2],p[3],JSON.stringify(p[4].split(',')),JSON.stringify(p[5].split(',')),imageUrl,p[7],p[8],p[9]]);
-    }
     for (const p of products) {
-      db.insert('INSERT INTO products (name,slug,price,type,sizes,colors,imageUrl,collectionId,movieId,stock) VALUES (?,?,?,?,?,?,?,?,?,?)', p);
+      db.insert('INSERT INTO products (name,slug,price,type,sizes,colors,imageUrl,collectionId,movieId,stock) VALUES (?,?,?,?,?,?,?,?,?,?)', [
+        p[0],p[1],p[2],p[3],JSON.stringify(p[4].split(',')),JSON.stringify(p[5].split(',')),p[6],p[7],p[8],p[9],
+      ]);
     }
 
     console.log(`Auto-seed done: ${movies.length} movies, ${products.length} products`);
