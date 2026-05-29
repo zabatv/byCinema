@@ -30,7 +30,7 @@ export default function MoviePage() {
       <div className="container">
         <div style={{ display: 'flex', gap: '2rem', marginBottom: '3rem', alignItems: 'start', flexWrap: 'wrap' }}>
           <div style={{ flex: '0 0 300px', borderRadius: 'var(--radius-lg)', overflow: 'hidden' }}>
-            <img src={movie.posterUrl || 'https://via.placeholder.com/300x450'} alt={movie.title} style={{ width: '100%', height: 'auto' }} />
+            <img src={movie.posterUrl || 'https://via.placeholder.com/300x450'} alt={movie.title} referrerPolicy="no-referrer" style={{ width: '100%', height: 'auto' }} />
           </div>
           <div style={{ flex: 1, minWidth: '280px' }}>
             <h1 style={{ fontSize: '2.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>{movie.title}</h1>

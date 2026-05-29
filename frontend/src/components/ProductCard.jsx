@@ -16,6 +16,7 @@ export default function ProductCard({ product }) {
           <img
             src={product.imageUrl || 'https://via.placeholder.com/300x400?text=No+Image'}
             alt={product.name}
+            referrerPolicy="no-referrer"
             style={{ width: '100%', height: '100%', objectFit: 'cover', transition: 'transform 0.3s' }}
             onMouseOver={e => e.target.style.transform = 'scale(1.05)'}
             onMouseOut={e => e.target.style.transform = 'scale(1)'}

@@ -54,6 +54,7 @@ export default function ProductPage() {
               <img
                 src={product.imageUrl || 'https://via.placeholder.com/600x800?text=No+Image'}
                 alt={product.name}
+                referrerPolicy="no-referrer"
                 style={{ width: '100%', height: 'auto', aspectRatio: '3/4', objectFit: 'cover' }}
               />
             </div>

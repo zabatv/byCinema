@@ -29,7 +29,7 @@ export default function Cart() {
             {cart.map((item, index) => (
               <div key={index} style={{ display: 'flex', gap: '1rem', padding: '1rem', backgroundColor: 'var(--color-surface)', borderRadius: 'var(--radius)', marginBottom: '1rem' }}>
                 <div style={{ width: '100px', height: '130px', borderRadius: 'var(--radius)', overflow: 'hidden', flexShrink: 0, backgroundColor: 'var(--color-surface-hover)' }}>
-                  <img src={item.imageUrl || 'https://via.placeholder.com/100x130'} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  <img src={item.imageUrl || 'https://via.placeholder.com/100x130'} alt={item.name} referrerPolicy="no-referrer" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
                 <div style={{ flex: 1 }}>
                   <Link to={`/product/${item.productId}`} style={{ fontWeight: 600, fontSize: '1.05rem' }}>{item.name}</Link>

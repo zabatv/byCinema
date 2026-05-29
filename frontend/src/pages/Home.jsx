@@ -64,6 +64,7 @@ export default function Home() {
                     <img
                       src={movie.posterUrl || 'https://via.placeholder.com/400x225?text=No+Poster'}
                       alt={movie.title}
+                      referrerPolicy="no-referrer"
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                   </div>
