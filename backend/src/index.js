@@ -32,22 +32,24 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.post('/api/seed', (req, res, next) => {
+async function autoSeed() {
   try {
     const db = getDb();
-    db.execute('DELETE FROM orders; DELETE FROM products; DELETE FROM collections; DELETE FROM movies; DELETE FROM users;');
+    const existing = db.queryOne('SELECT COUNT(*) as count FROM movies');
+    if (existing && existing.count > 0) { console.log('DB already seeded'); return; }
 
+    console.log('Auto-seeding database...');
     const hp = bcrypt.hashSync('admin123', 10);
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['admin@bycinema.com', hp, 'Admin', 'admin']);
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['user@test.com', bcrypt.hashSync('user123', 10), 'Test User', 'user']);
 
     const movies = [
       ['Космическая сага','kosmicheskaya-saga','Эпическая космическая опера','https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400','1977','Фантастика'],
-      ['Волшебный мир','volshebnyy-mir','Мальчик поступает в школу магии','https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?w=400','2001','Фэнтези'],
-      ['Тёмный рыцарь','temnyy-rytsar','Мрачный детектив борется с преступностью','https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400','2005','Экшн'],
+      ['Волшебный мир','volshebnyy-mir','Школа магии и волшебства','https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?w=400','2001','Фэнтези'],
+      ['Тёмный рыцарь','temnyy-rytsar','Борьба с преступностью в Готэме','https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400','2005','Экшн'],
       ['Средиземье: Кольцо','sredizemye-koltso','Хоббит уничтожает кольцо','https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400','2001','Фэнтези'],
-      ['Лабиринт разума','labirint-razuma','Учёные проникают в сны','https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400','2010','Триллер'],
-      ['Королевство драконов','korolevstvo-drakonov','Викинг приручает дракона','https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400','2010','Анимация'],
+      ['Лабиринт разума','labirint-razuma','Путешествие в мир снов','https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400','2010','Триллер'],
+      ['Королевство драконов','korolevstvo-drakonov','Викинг и его дракон','https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400','2010','Анимация'],
     ];
     for (const m of movies) db.insert('INSERT INTO movies (title,slug,description,posterUrl,year,genre) VALUES (?,?,?,?,?,?)', m);
 
@@ -86,16 +88,15 @@ app.post('/api/seed', (req, res, next) => {
     ];
     for (const p of products) {
       db.insert('INSERT INTO products (name,slug,price,type,sizes,colors,imageUrl,collectionId,movieId,stock) VALUES (?,?,?,?,?,?,?,?,?,?)', [
-        p[0], p[1], p[2], p[3], JSON.stringify(p[4].split(',')), JSON.stringify(p[5].split(',')), p[6], p[7], p[8], p[9],
+        p[0],p[1],p[2],p[3],JSON.stringify(p[4].split(',')),JSON.stringify(p[5].split(',')),p[6],p[7],p[8],p[9],
       ]);
     }
 
-    res.json({ success: true, message: `Seeded: ${movies.length} movies, ${cols.length} collections, ${products.length} products` });
+    console.log(`Auto-seed done: ${movies.length} movies, ${products.length} products`);
   } catch (err) {
-    console.error('Seed error:', err);
-    res.status(500).json({ success: false, error: err.message });
+    console.error('Auto-seed failed:', err);
   }
-});
+}
 
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
@@ -108,8 +109,10 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 initDatabase().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  autoSeed().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+    });
   });
 });
 
