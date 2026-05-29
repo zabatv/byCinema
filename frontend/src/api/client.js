@@ -1,4 +1,4 @@
-const API_BASE = '/api/v1';
+const API_BASE = import.meta.env.VITE_API_URL || '/api/v1';
 
 function getToken() {
   return localStorage.getItem('token');
@@ -30,7 +30,13 @@ async function request(endpoint, options = {}) {
     body: body ? JSON.stringify(body) : undefined,
   });
 
-  const data = await res.json();
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    const text = await res.text().catch(() => '');
+    throw new Error(text || `Request failed with status ${res.status}`);
+  }
 
   if (!res.ok) {
     throw new Error(data.error || `Request failed with status ${res.status}`);
