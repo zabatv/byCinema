@@ -8,6 +8,7 @@ import { fileURLToPath } from 'url';
 import bcrypt from 'bcryptjs';
 import { initDatabase, getDb } from './config/database.js';
 import { errorHandler, notFoundHandler } from './utils/errors.js';
+import { PORT, FRONTEND_URL } from './config/env.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
 import collectionRoutes from './routes/collections.js';
@@ -19,10 +20,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
-app.use(cors({ origin: process.env.FRONTEND_URL || '*', credentials: true }));
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(morgan('dev'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));

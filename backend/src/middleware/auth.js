@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { AppError } from '../utils/errors.js';
 import { getDb } from '../config/database.js';
+import { JWT_SECRET } from '../config/env.js';
 
 export function authenticate(req, _res, next) {
   const authHeader = req.headers.authorization;
@@ -10,7 +11,7 @@ export function authenticate(req, _res, next) {
 
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     const db = getDb();
     const user = db.queryOne('SELECT id, email, name, role FROM users WHERE id = ?', [decoded.id]);
     if (!user) {
@@ -32,7 +33,7 @@ export function optionalAuth(req, _res, next) {
 
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, JWT_SECRET);
     const db = getDb();
     const user = db.queryOne('SELECT id, email, name, role FROM users WHERE id = ?', [decoded.id]);
     req.user = user || null;

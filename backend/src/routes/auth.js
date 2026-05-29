@@ -6,12 +6,13 @@ import { getDb } from '../config/database.js';
 import { AppError } from '../utils/errors.js';
 import { validate } from '../middleware/validate.js';
 import { authenticate } from '../middleware/auth.js';
+import { JWT_SECRET, JWT_EXPIRES_IN } from '../config/env.js';
 
 const router = Router();
 
 function generateToken(user) {
-  return jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+  return jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, {
+    expiresIn: JWT_EXPIRES_IN,
   });
 }
 
