@@ -32,6 +32,23 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+async function downloadImage(url, subdir, index) {
+  const filename = `${index}.jpg`;
+  const dir = path.join(__dirname, '..', 'uploads', subdir);
+  const filepath = path.join(dir, filename);
+  try {
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const buf = Buffer.from(await resp.arrayBuffer());
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(filepath, buf);
+    return `/uploads/${subdir}/${filename}`;
+  } catch (err) {
+    console.warn(`Failed to download ${url}: ${err.message}`);
+    return url;
+  }
+}
+
 async function autoSeed() {
   try {
     const db = getDb();
@@ -43,14 +60,20 @@ async function autoSeed() {
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['admin@bycinema.com', hp, 'Admin', 'admin']);
     db.insert('INSERT INTO users (email, password, name, role) VALUES (?,?,?,?)', ['user@test.com', bcrypt.hashSync('user123', 10), 'Test User', 'user']);
 
-    const movies = [
-      ['Космическая сага','kosmicheskaya-saga','Эпическая космическая опера','https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400','1977','Фантастика'],
-      ['Волшебный мир','volshebnyy-mir','Школа магии и волшебства','https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?w=400','2001','Фэнтези'],
-      ['Тёмный рыцарь','temnyy-rytsar','Борьба с преступностью в Готэме','https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400','2005','Экшн'],
-      ['Средиземье: Кольцо','sredizemye-koltso','Хоббит уничтожает кольцо','https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400','2001','Фэнтези'],
-      ['Лабиринт разума','labirint-razuma','Путешествие в мир снов','https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400','2010','Триллер'],
-      ['Королевство драконов','korolevstvo-drakonov','Викинг и его дракон','https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400','2010','Анимация'],
+    const movieSources = [
+      { title:'Космическая сага',slug:'kosmicheskaya-saga',desc:'Эпическая космическая опера',img:'https://images.unsplash.com/photo-1614728263952-84ea256f9679?w=400',year:'1977',genre:'Фантастика' },
+      { title:'Волшебный мир',slug:'volshebnyy-mir',desc:'Школа магии и волшебства',img:'https://images.unsplash.com/photo-1535666669445-e8c15cd2e7d9?w=400',year:'2001',genre:'Фэнтези' },
+      { title:'Тёмный рыцарь',slug:'temnyy-rytsar',desc:'Борьба с преступностью в Готэме',img:'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?w=400',year:'2005',genre:'Экшн' },
+      { title:'Средиземье: Кольцо',slug:'sredizemye-koltso',desc:'Хоббит уничтожает кольцо',img:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400',year:'2001',genre:'Фэнтези' },
+      { title:'Лабиринт разума',slug:'labirint-razuma',desc:'Путешествие в мир снов',img:'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400',year:'2010',genre:'Триллер' },
+      { title:'Королевство драконов',slug:'korolevstvo-drakonov',desc:'Викинг и его дракон',img:'https://images.unsplash.com/photo-1610296669228-602fa827fc1f?w=400',year:'2010',genre:'Анимация' },
     ];
+    const movies = [];
+    for (let i = 0; i < movieSources.length; i++) {
+      const s = movieSources[i];
+      const posterUrl = await downloadImage(s.img, 'posters', `movie-${i}`);
+      movies.push([s.title, s.slug, s.desc, posterUrl, s.year, s.genre]);
+    }
     for (const m of movies) db.insert('INSERT INTO movies (title,slug,description,posterUrl,year,genre) VALUES (?,?,?,?,?,?)', m);
 
     const cols = [
@@ -60,7 +83,7 @@ async function autoSeed() {
     ];
     for (const c of cols) db.insert('INSERT INTO collections (name,slug,movieId) VALUES (?,?,?)', c);
 
-    const products = [
+    const productSources = [
       ['Футболка Повстанец','footbolka-povstanec',249000,'Футболка','S,M,L,XL','Белый,Чёрный','https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',1,1,50],
       ['Худи Галактика','hudi-galaktika',459000,'Худи','M,L,XL','Тёмно-синий,Чёрный','https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',1,1,30],
       ['Куртка лётчика','kurtka-letchika',899000,'Куртка','M,L,XL','Коричневый,Чёрный','https://images.unsplash.com/photo-1551028719-00167b16eac5?w=400',2,1,15],
@@ -86,10 +109,14 @@ async function autoSeed() {
       ['Штаны Викинг','shtany-viking',399000,'Штаны','S,M,L,XL','Коричневый,Чёрный,Серый','https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400',11,6,22],
       ['Брелок Драконье яйцо','brelok-drakone-yayco',79000,'Аксессуар','S','Зелёный,Красный,Синий','https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=400',12,6,150],
     ];
+    const products = [];
+    for (let i = 0; i < productSources.length; i++) {
+      const p = productSources[i];
+      const imageUrl = await downloadImage(p[6], 'products', `product-${i}`);
+      products.push([p[0],p[1],p[2],p[3],JSON.stringify(p[4].split(',')),JSON.stringify(p[5].split(',')),imageUrl,p[7],p[8],p[9]]);
+    }
     for (const p of products) {
-      db.insert('INSERT INTO products (name,slug,price,type,sizes,colors,imageUrl,collectionId,movieId,stock) VALUES (?,?,?,?,?,?,?,?,?,?)', [
-        p[0],p[1],p[2],p[3],JSON.stringify(p[4].split(',')),JSON.stringify(p[5].split(',')),p[6],p[7],p[8],p[9],
-      ]);
+      db.insert('INSERT INTO products (name,slug,price,type,sizes,colors,imageUrl,collectionId,movieId,stock) VALUES (?,?,?,?,?,?,?,?,?,?)', p);
     }
 
     console.log(`Auto-seed done: ${movies.length} movies, ${products.length} products`);
