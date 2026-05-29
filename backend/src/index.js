@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { initDatabase } from './config/database.js';
+import { initDatabase, getDb } from './config/database.js';
 import { errorHandler, notFoundHandler } from './utils/errors.js';
 import authRoutes from './routes/auth.js';
 import productRoutes from './routes/products.js';
@@ -33,7 +33,6 @@ app.get('/api/health', (_req, res) => {
 
 app.post('/api/seed', async (_req, res, next) => {
   try {
-    const { initDatabase, getDb } = await import('./config/database.js');
     const bcrypt = await import('bcryptjs');
     const db = getDb();
     db.execute('DELETE FROM orders; DELETE FROM products; DELETE FROM collections; DELETE FROM movies; DELETE FROM users;');
