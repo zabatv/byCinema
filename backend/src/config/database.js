@@ -77,7 +77,9 @@ export function getDb() {
 }
 
 export async function initDatabase() {
-  SQL = await initSqlJs();
+  SQL = await initSqlJs({
+    locateFile: (file) => path.join(__dirname, '..', 'node_modules', 'sql.js', 'dist', file),
+  });
 
   const dbPath = process.env.DATABASE_URL || path.join(__dirname, '..', '..', 'data', 'bycinema.db');
 
